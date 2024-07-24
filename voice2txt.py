@@ -1,4 +1,4 @@
-import oss2,os
+import oss2,os,sys
 from datetime import datetime
 import dashscope
 import json
@@ -11,18 +11,22 @@ ak = os.environ.get('OSS_ACCESS_KEY')
 ask = os.environ.get('OSS_SECRET_KEY')
 dashscope.api_key = os.environ.get('DASHSCOPE_AK')
 env = Env()
-env.read_env('.env.local', recurse=False)
-if len(env.str('DASHSCOPE_AK',''))>0:
-    dashscope.api_key = env.str('DASHSCOPE_AK')
-if env.str('OSS_AK',''):
-    print("------")
-    ak = env.str('OSS_AK')
-    ask = env.str('OSS_SK')
-
-
-
+def load_config():
+    if getattr(sys, 'frozen', False):
+        # 如果是打包后的可执行文件
+        config_path = os.path.join(sys._MEIPASS, '.env.local')
+    else:
+        # 如果是开发环境
+        config_path = '.env.local'
 
 def upload_file(object_name):
+    env.read_env(load_config(), recurse = False)
+    if len(env.str('DASHSCOPE_AK', '')) > 0:
+        dashscope.api_key = env.str('DASHSCOPE_AK')
+    if env.str('OSS_AK', ''):
+        print("------")
+        ak = env.str('OSS_AK')
+        ask = env.str('OSS_SK')
     auth = oss2.Auth(ak, ask)
 
     bucket=oss2.Bucket(auth, "oss-cn-hangzhou.aliyuncs.com", "dawanapp")

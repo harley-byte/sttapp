@@ -42,14 +42,13 @@ jobs:
         run: |
           echo "FFMPEG_PATH=${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}" >> $env:GITHUB_ENV
           echo "FFmpeg path: ${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}"
+      - name: Create config file
+        run: |
+          echo "OSS_AK=${{ secrets.OSS_AK }}" > .env.local
+          echo "OSS_SK=${{ secrets.OSS_SK }}" >> .env.local
+          echo "DASHSCOPE_AK=${{ secrets.DASHSCOPE_AK }}" >> .env.local
 
       - name: Build executable with PyInstaller
-        env:
-          OSS_ACCESS_KEY: ${{ secrets.OSS_AK }}
-          OSS_SECRET_KEY: ${{ secrets.OSS_SK }}
-          DASHSCOPE_AK: ${{ secrets.DASHSCOPE_AK}}
-
-
         run: |
           echo "FFMPEG_PATH: ${{ env.FFMPEG_PATH }}"
           pyinstaller --clean --noconfirm cicd.spec
