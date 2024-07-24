@@ -1,5 +1,4 @@
 import os.path,subprocess
-
 import wx,sys
 from pathlib import Path
 from panels import voiceSeparationPanel,videoToTextPanel
@@ -77,7 +76,6 @@ class MyApp(wx.App):
 if __name__ == '__main__':
     os.environ['NO_PROXY'] = '*'
     os.environ['no_proxy'] = '*'
-
     if "--test-ffmpeg" in sys.argv:
         ffmpeg_path = os.getenv('FFMPEG_PATH')
         try:

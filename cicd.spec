@@ -60,15 +60,15 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon='icon.ico'
+    icon='icon.ico',
+     # 在这里添加环境变量
+    environ={
+        'OSS_ACCESS_KEY': os.environ.get('OSS_ACCESS_KEY', ''),
+        'OSS_SECRET_KEY': os.environ.get('OSS_SECRET_KEY', ''),
+        'DASHSCOPE_AK': os.environ.get('DASHSCOPE_AK', ''),
+    }
 )
-# 添加环境变量到可执行文件
-exe.add_runtime_option('environ', {
-    'OSS_ACCESS_KEY': os.environ.get('OSS_ACCESS_KEY', ''),
-    'OSS_SECRET_KEY': os.environ.get('OSS_SECRET_KEY', ''),
-    'DASHSCOPE_AK': os.environ.get('DASHSCOPE_AK', ''),
 
-})
 coll = COLLECT(
     exe,
     a.binaries,

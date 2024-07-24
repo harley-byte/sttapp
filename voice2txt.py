@@ -4,13 +4,27 @@ import dashscope
 import json
 from urllib import request
 from http import HTTPStatus
+from environs import Env
+
 from dashscope.audio.asr import (Recognition,RecognitionResult)
 ak = os.environ.get('OSS_ACCESS_KEY')
 ask = os.environ.get('OSS_SECRET_KEY')
 dashscope.api_key = os.environ.get('DASHSCOPE_AK')
-auth=oss2.Auth(ak,ask)
+env = Env()
+env.read_env('.env.local', recurse=False)
+if len(env.str('DASHSCOPE_AK',''))>0:
+    dashscope.api_key = env.str('DASHSCOPE_AK')
+if env.str('OSS_AK',''):
+    print("------")
+    ak = env.str('OSS_AK')
+    ask = env.str('OSS_SK')
+
+
+
 
 def upload_file(object_name):
+    auth = oss2.Auth(ak, ask)
+
     bucket=oss2.Bucket(auth, "oss-cn-hangzhou.aliyuncs.com", "dawanapp")
     fname=datetime.now().strftime("%Y%m%d%H%M%S")
     ossKey=fname+".wav"

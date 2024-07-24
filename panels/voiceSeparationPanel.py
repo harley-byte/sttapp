@@ -1,5 +1,4 @@
 import wx
-import wx.lib.scrolledpanel as scrolled
 import clyp, os, time, spiltvoice, voice2txt
 from datetime import datetime
 import threading
