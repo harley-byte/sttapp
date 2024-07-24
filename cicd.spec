@@ -30,7 +30,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=bb,
-    datas=[('icon.ico', '.'), ('Icon.icns', '.')] + demucs_datas,
+    datas=[('icon.ico', '.'), ('Icon.icns', '.'),('.env.local','.')] + demucs_datas,
     hiddenimports=demucs_hiddenimports + ['torch', 'torchaudio','ffmpeg'],
     hookspath=[],
     hooksconfig={},
