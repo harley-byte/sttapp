@@ -7,9 +7,6 @@ from http import HTTPStatus
 from environs import Env
 
 from dashscope.audio.asr import (Recognition,RecognitionResult)
-ak = os.environ.get('OSS_ACCESS_KEY')
-ask = os.environ.get('OSS_SECRET_KEY')
-dashscope.api_key = os.environ.get('DASHSCOPE_AK')
 env = Env()
 def load_config():
     if getattr(sys, 'frozen', False):
@@ -20,6 +17,9 @@ def load_config():
         config_path = '.env.local'
 
 def upload_file(object_name):
+    ak=''
+    ask=''
+    dashscope.api_key=''
     env.read_env(load_config(), recurse = False)
     if len(env.str('DASHSCOPE_AK', '')) > 0:
         dashscope.api_key = env.str('DASHSCOPE_AK')
