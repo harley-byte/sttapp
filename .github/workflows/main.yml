@@ -1,0 +1,66 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Install ffmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+
+      - name: Install ffmpeg (Windows)
+        if: runner.os == 'Windows'
+        uses: FedericoCarboni/setup-ffmpeg@v3
+        id: setup-ffmpeg
+
+      - name: Set FFmpeg path (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          echo "FFMPEG_PATH=${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}" >> $env:GITHUB_ENV
+          echo "FFmpeg path: ${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}"
+
+      - name: Build executable with PyInstaller
+        env:
+          OSS_ACCESS_KEY: ${{ secrets.OSS_AK }}
+          OSS_SECRET_KEY: ${{ secrets.OSS_SK }}
+          DASHSCOPE_AK: ${{ secrets.DASHSCOPE_AK}}
+
+
+        run: |
+          echo "FFMPEG_PATH: ${{ env.FFMPEG_PATH }}"
+          pyinstaller --clean --noconfirm cicd.spec
+
+      - name: Verify dist directory (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Get-ChildItem -Path dist -Recurse
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app-${{ runner.os }}
+          path: dist/main

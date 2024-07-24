@@ -1,0 +1,14 @@
+aliyun-python-sdk-core==2.15.1
+dashscope==1.20.1
+# demucs>=4.1.0a2
+git+https://github.com/adefossez/demucs.git  # Use git repo as it 4.1.0 hasn't been pushed to PyPI
+dora_search==0.1.12
+ffmpeg-python==0.2.0
+oss2==2.18.6
+pyinstaller==6.9.0
+pyinstaller-hooks-contrib==2024.7
+wxPython==4.2.1
+# please make sure you have already a pytorch install that is cuda enabled!
+dora-search
+torch>=1.8.1
+torchaudio>=0.8,<2.1
