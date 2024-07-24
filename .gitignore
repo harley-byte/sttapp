@@ -2,3 +2,7 @@ dist/*
 build/*
 .venv/*
 .env/*
+*.wav
+*.mp3
+*.flac
+
