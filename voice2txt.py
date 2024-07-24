@@ -5,8 +5,9 @@ import json
 from urllib import request
 from http import HTTPStatus
 from environs import Env
-
+import ssl
 from dashscope.audio.asr import (Recognition,RecognitionResult)
+ssl._create_default_https_context = ssl._create_unverified_context
 env = Env()
 def load_config():
     if getattr(sys, 'frozen', False):
