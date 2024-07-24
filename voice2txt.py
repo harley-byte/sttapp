@@ -11,10 +11,11 @@ env = Env()
 def load_config():
     if getattr(sys, 'frozen', False):
         # 如果是打包后的可执行文件
-        config_path = os.path.join(sys._MEIPASS, '.env.local')
+        return  os.path.join(sys._MEIPASS, '.env.local')
     else:
         # 如果是开发环境
-        config_path = '.env.local'
+        return  '.env.local'
+
 
 def upload_file(object_name):
     ak=''
@@ -28,7 +29,6 @@ def upload_file(object_name):
         ak = env.str('OSS_AK')
         ask = env.str('OSS_SK')
     auth = oss2.Auth(ak, ask)
-
     bucket=oss2.Bucket(auth, "oss-cn-hangzhou.aliyuncs.com", "dawanapp")
     fname=datetime.now().strftime("%Y%m%d%H%M%S")
     ossKey=fname+".wav"
