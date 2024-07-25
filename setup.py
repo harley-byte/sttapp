@@ -3,48 +3,57 @@ import os
 import platform
 from cx_Freeze import setup, Executable
 
-# 定义应用程序名称
+# 定义应用程序名称和版本号
 APP_NAME = "DaWanBox"
-
-# 定义版本号
 VERSION = "0.1.0"
-
-# 收集 demucs 相关文件和子模块
-# 注意: cx_Freeze 没有直接等效于 collect_data_files 和 collect_submodules 的函数
-# 您可能需要手动指定这些文件和模块
 
 # 检查操作系统类型
 is_windows = platform.system() == 'Windows'
+is_mac = platform.system() == 'Darwin'
+
+# 设置基础
 base = "Win32GUI" if is_windows else None
 
-# 设置图标
-icon = "icon.ico" if is_windows else "Icon.icns"
+# 设置图标路径
+icon_windows = os.path.abspath("icon.ico")
+icon_mac = os.path.abspath("Icon.icns")
 
-# 设置 include_files
-include_files = [icon, '.env.local']
+# 设置 include_files（两个平台通用的文件）
+include_files = [
+    ('.env.local', '.env.local'),
+    ('Info.plist', 'Info.plist'),
+    ('icon.ico','icon.ico'),
+    ('Icon.icns','Icon.icns')
+]
+
+# 如果是 Windows，添加 icon.ico 到 include_files
 if is_windows:
-    ffmpeg_path = os.getenv('FFMPEG_PATH', '')
-    if ffmpeg_path:
-        ffmpeg_executable = os.path.join(ffmpeg_path, 'ffmpeg.exe')
-        if os.path.exists(ffmpeg_executable):
-            include_files.append((ffmpeg_executable, 'ffmpeg.exe'))
-        else:
-            print(f"FFmpeg executable not found at {ffmpeg_executable}")
+    include_files.append((icon_windows, 'icon.ico'))
+
+# 添加 FFmpeg（如果环境变量设置了的话）
+ffmpeg_path = os.getenv('FFMPEG_PATH', '')
+if ffmpeg_path:
+    ffmpeg_executable = os.path.join(ffmpeg_path, 'ffmpeg.exe' if is_windows else 'ffmpeg')
+    if os.path.exists(ffmpeg_executable):
+        include_files.append((ffmpeg_executable, 'ffmpeg.exe' if is_windows else 'ffmpeg'))
     else:
-        print("FFMPEG_PATH environment variable not set")
+        print(f"FFmpeg executable not found at {ffmpeg_executable}")
+else:
+    print("FFMPEG_PATH environment variable not set")
 
 # 设置构建选项
 build_exe_options = {
     "packages": ["demucs", "torch", "torchaudio", "ffmpeg"],
     "excludes": [],
     "include_files": include_files,
-    "include_msvcr": True,  # 包含 MSVCR DLL
+    "include_msvcr": True,
 }
 
 # 设置 bdist_mac 选项 (仅适用于 macOS)
 bdist_mac_options = {
     "bundle_name": APP_NAME,
-    "iconfile": "Icon.icns",
+    "iconfile": icon_mac,
+    'include_resources':include_files,
     "custom_info_plist": "Info.plist",
 }
 
@@ -54,7 +63,7 @@ executables = [
         "main.py",
         base=base,
         target_name=APP_NAME,
-        icon=icon,
+        icon=icon_windows if is_windows else None,  # 只在 Windows 上设置 icon
     )
 ]
 

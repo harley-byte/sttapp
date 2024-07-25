@@ -7,26 +7,31 @@ from http import HTTPStatus
 from environs import Env
 import ssl
 from dashscope.audio.asr import (Recognition,RecognitionResult)
+
+import common
+
 ssl._create_default_https_context = ssl._create_unverified_context
 env = Env()
 def load_config():
     if getattr(sys, 'frozen', False):
-        # 如果是打包后的可执行文件
-        return  os.path.join(sys._MEIPASS, '.env.local')
+        if hasattr(sys, '_MEIPASS'):
+            base_path = sys._MEIPASS
+        else:
+            base_path = common.resource_path('')
+        return os.path.join(base_path, '.env.local')
     else:
-        # 如果是开发环境
-        return  '.env.local'
+        return '.env.local'
 
 
 def upload_file(object_name):
     ak=''
     ask=''
     dashscope.api_key=''
+    print(load_config())
     env.read_env(load_config(), recurse = False)
     if len(env.str('DASHSCOPE_AK', '')) > 0:
         dashscope.api_key = env.str('DASHSCOPE_AK')
     if env.str('OSS_AK', ''):
-        print("------")
         ak = env.str('OSS_AK')
         ask = env.str('OSS_SK')
     auth = oss2.Auth(ak, ask)

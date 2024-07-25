@@ -1,12 +1,12 @@
 import ffmpeg
 import os
-import sys
+import sys,common
 from pathlib import Path
 
 def get_ffmpeg_path():
     ffmpeg_path="/opt/homebrew/bin/ffmpeg"
     if hasattr(sys, '_MEIPASS'):
-        base_path = Path(sys._MEIPASS)
+        base_path = common.resource_path("")
         # 对于 Windows 和 macOS 分别处理 ffmpeg 路径
         if sys.platform == "win32":
             ffmpeg_path = os.path.join(base_path, 'ffmpeg','ffmpeg.exe')

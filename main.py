@@ -1,5 +1,5 @@
 import os.path,subprocess
-import wx,sys
+import wx,sys,common
 from pathlib import Path
 from panels import voiceSeparationPanel,videoToTextPanel
 class BusyInfo(wx.Frame):
@@ -34,12 +34,8 @@ class MainFrame(wx.Frame):
 
         self.panel = wx.Panel(self)
         main_sizer = wx.BoxSizer(wx.VERTICAL)
-        if hasattr(sys, '_MEIPASS'):
-            base_path = Path(sys._MEIPASS)
-        else:
-            base_path = Path(__file__).resolve().parent
         # 设置应用程序图标
-        icon = wx.Icon(os.path.join(base_path,"icon.ico"), wx.BITMAP_TYPE_ICO)
+        icon = wx.Icon(os.path.join(common.resource_path(""),"icon.ico"), wx.BITMAP_TYPE_ICO)
         self.SetIcon(icon)
 
         # 创建Notebook

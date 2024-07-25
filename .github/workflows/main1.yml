@@ -66,12 +66,12 @@ jobs:
 
       - name: Verify dist directory (macOS)
         if: runner.os == 'macOS'
-        run: ls -R dist
+        run: ls -R build
 
       - name: Create DMG (macOS)
         if: runner.os == 'macOS'
         run: |
-          hdiutil create -volname DaWanBox -srcfolder dist/DaWanBox.app -ov -format UDZO DaWanBox.dmg
+          hdiutil create -volname DaWanBox -srcfolder build/DaWanBox.app -ov -format UDZO DaWanBox.dmg
 
       - name: Upload artifact (Windows)
         if: runner.os == 'Windows'
