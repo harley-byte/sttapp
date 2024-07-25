@@ -1,0 +1,88 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt cx_Freeze
+
+      - name: Install ffmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+
+      - name: Install ffmpeg (Windows)
+        if: runner.os == 'Windows'
+        uses: FedericoCarboni/setup-ffmpeg@v3
+        id: setup-ffmpeg
+
+      - name: Set FFmpeg path (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          echo "FFMPEG_PATH=${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}" >> $env:GITHUB_ENV
+          echo "FFmpeg path: ${{ steps.setup-ffmpeg.outputs.ffmpeg-path }}"
+
+      - name: Create config file
+        run: |
+          echo "OSS_AK=${{ secrets.OSS_AK }}" > .env.local
+          echo "OSS_SK=${{ secrets.OSS_SK }}" >> .env.local
+          echo "DASHSCOPE_AK=${{ secrets.DASHSCOPE_AK }}" >> .env.local
+
+      - name: Build executable with cx_Freeze (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          python setup.py build
+
+      - name: Build application with cx_Freeze (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          python setup.py bdist_mac
+
+      - name: Verify build directory (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Get-ChildItem -Path build -Recurse
+
+      - name: Verify dist directory (macOS)
+        if: runner.os == 'macOS'
+        run: ls -R dist
+
+      - name: Create DMG (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          hdiutil create -volname DaWanBox -srcfolder dist/DaWanBox.app -ov -format UDZO DaWanBox.dmg
+
+      - name: Upload artifact (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DaWanBox-Windows
+          path: build/exe.*/
+
+      - name: Upload artifact (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DaWanBox-macOS
+          path: DaWanBox.dmg
