@@ -42,18 +42,24 @@ else:
     print("FFMPEG_PATH environment variable not set")
 
 # 设置构建选项
-bdist_msi_options = {
+build_exe_options = {
     "packages": ["demucs", "torch", "torchaudio", "ffmpeg"],
     "excludes": [],
     "include_files": include_files,
     "include_msvcr": True,
 }
 
+# 设置 bdist_msi 选项 (仅适用于 Windows)
+bdist_msi_options = {
+    "add_to_path": True,
+    "initial_target_dir": r"[ProgramFilesFolder]\%s" % APP_NAME,
+}
+
 # 设置 bdist_mac 选项 (仅适用于 macOS)
 bdist_mac_options = {
     "bundle_name": APP_NAME,
     "iconfile": icon_mac,
-    'include_resources':include_files,
+    'include_resources': include_files,
     "custom_info_plist": "Info.plist",
 }
 
@@ -67,6 +73,10 @@ executables = [
     )
 ]
 
+# 设置环境变量
+os.environ['OSS_ACCESS_KEY'] = os.environ.get('OSS_ACCESS_KEY', '')
+os.environ['OSS_SECRET_KEY'] = os.environ.get('OSS_SECRET_KEY', '')
+os.environ['DASHSCOPE_AK'] = os.environ.get('DASHSCOPE_AK', '')
 
 # 运行安装程序
 setup(
@@ -74,6 +84,7 @@ setup(
     version=VERSION,
     description="Da Wan Box Application",
     options={
+        "build_exe": build_exe_options,
         "bdist_msi": bdist_msi_options,
         "bdist_mac": bdist_mac_options,
     },
