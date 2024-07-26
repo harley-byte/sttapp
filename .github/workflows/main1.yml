@@ -52,7 +52,7 @@ jobs:
       - name: Build executable with cx_Freeze (Windows)
         if: runner.os == 'Windows'
         run: |
-          python setup.py build
+          python setup.py bdist_msi
 
       - name: Build application with cx_Freeze (macOS)
         if: runner.os == 'macOS'
