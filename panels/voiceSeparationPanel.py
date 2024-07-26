@@ -78,7 +78,7 @@ class VoiceSeparationPanel(wx.Panel):
             #clyp.splitaudio(file_path, out_path)
             selected_value = self.model_radio_box.GetStringSelection()
             source_value=self.sources_radio_box.GetStringSelection();
-            spiltvoice.separate_audio(out_path, os.path.join(current_working_directory),selected_value, source_value)
+            spiltvoice.separate_audio(file_path, os.path.join(current_working_directory),selected_value, source_value)
             response_content = [os.path.join(current_working_directory, selected_value,"output",source_value+".wav")]
 
         except Exception as e:
