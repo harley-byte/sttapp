@@ -1,6 +1,5 @@
 import os.path,subprocess
 import wx,sys,common
-from pathlib import Path
 from panels import voiceSeparationPanel,videoToTextPanel
 class BusyInfo(wx.Frame):
     def __init__(self, parent, message):

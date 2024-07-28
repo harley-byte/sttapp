@@ -73,10 +73,7 @@ executables = [
     )
 ]
 
-# 设置环境变量
-os.environ['OSS_ACCESS_KEY'] = os.environ.get('OSS_ACCESS_KEY', '')
-os.environ['OSS_SECRET_KEY'] = os.environ.get('OSS_SECRET_KEY', '')
-os.environ['DASHSCOPE_AK'] = os.environ.get('DASHSCOPE_AK', '')
+
 
 # 运行安装程序
 setup(
